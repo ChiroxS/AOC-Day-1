@@ -1,37 +1,60 @@
 fn main() {
     let sum : i32 = include_str!("../input.txt")
         .split("\n")
-        .map(|l| replace_digit(l.to_string()))
-        .map(|l| l.to_string().chars().filter(|c| c.is_numeric()).collect::<String>())
-        .filter(|l| l.to_string().len() > 0)
-        .map(|l| vec![l.chars().next().unwrap(), 
-                      l.chars().last().unwrap()]
-                        .into_iter().collect::<String>())
-        .map(|l| l.to_string().parse::<i32>().unwrap())
+        .map(|l| vec![find_left(l), find_right(l)].iter().collect::<String>())
+        .map(|l| l.parse::<i32>().unwrap())
         .sum();
-    println!("{}", sum);
+    println!("{}",sum)
 }
 
-fn replace_digit(s: String) -> String {
-    let mut my_s = s; 
-    for n in 1..=9 {
-        let str_val = get_str_value(n);
-        my_s = my_s.replace(&str_val, &n.to_string());
-    };
-    return my_s;
+fn find_left(s: &str) -> char {
+    let digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9",
+                  "one", "two", "three", "four", "five",
+                  "six", "seven", "eight", "nine"];
+    let idx_vec : Vec<i32> = digits 
+        .iter()
+        .map(|d| s.match_indices(d).collect::<Vec<_>>().iter().next().unwrap_or(&(999 as usize,"")).0 as i32)
+        .collect();
+    let min : i32 = idx_vec    
+        .iter()
+        .enumerate()
+        .min_by_key(|(_, &value)| value)
+        .map(|(idx, _)| idx)
+        .unwrap() as i32;
+    return char::from_digit(get_numeric_value(digits.iter().nth(min as usize).unwrap()),10).unwrap();
 }
 
-fn get_str_value(nr : i32 ) -> &'static str {
-    match nr {
-        1=> return "one",
-        2=> return "two",
-        3=> return "three",
-        4=> return "four",
-        5=> return "five",
-        6=> return "six",
-        7=> return "seven",
-        8=> return "eight",
-        9=> return "nine",
-        _=> return ""
+
+fn find_right(s: &str) -> char {
+    let digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9",
+                  "one", "two", "three", "four", "five",
+                  "six", "seven", "eight", "nine"];
+    let idx_vec : Vec<i32> = digits 
+        .iter()
+        .map(|d| s.match_indices(d).collect::<Vec<_>>().iter().next().unwrap_or(&(0 as usize,"")).0 as i32)
+        .collect();
+    let max : i32 = idx_vec    
+        .iter()
+        .enumerate()
+        .max_by_key(|(_, &value)| value)
+        .map(|(idx, _)| idx)
+        .unwrap() as i32;
+    return char::from_digit(get_numeric_value(digits.iter().nth(max as usize).unwrap()),10).unwrap();
+}
+
+fn get_numeric_value(s : &str) -> u32 {
+    match s { 
+        "1"|"one" => return 1, 
+        "2"|"two" => return 2,
+        "3"|"three" => return 3, 
+        "4"|"four" => return 4,
+        "5"|"five" => return 5, 
+        "6"|"six" => return 6,
+        "7"|"seven" => return 7,
+        "8"|"eight" => return 8, 
+        "9"|"nine" => return 9,
+        _ => return 0
     }
 }
+
+
