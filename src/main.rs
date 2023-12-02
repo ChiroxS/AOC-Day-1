@@ -1,10 +1,27 @@
 fn main() {
-    let sum : i32 = include_str!("../input.txt")
+    
+    let initial  = include_str!("../input.txt")
+        .split("\n")
+        .map(|l| l.to_string())
+        .collect::<Vec<String>>();
+    let digits : Vec<i32> = include_str!("../input.txt")
         .split("\n")
         .map(|l| vec![find_left(l), find_right(l)].iter().collect::<String>())
         .map(|l| l.parse::<i32>().unwrap())
+        .collect();
+
+    let sum : i32 = digits
+        .iter()
         .sum();
-    println!("{}",sum)
+    
+    println!("Sum is {}", sum);
+
+    for n in 0..1000 {
+        println!("initial {}", initial[n]);
+        println!("result {}", digits[n]);
+        println!("");
+    }
+
 }
 
 fn find_left(s: &str) -> char {
@@ -31,7 +48,8 @@ fn find_right(s: &str) -> char {
                   "six", "seven", "eight", "nine"];
     let idx_vec : Vec<i32> = digits 
         .iter()
-        .map(|d| s.match_indices(d).collect::<Vec<_>>().iter().next().unwrap_or(&(0 as usize,"")).0 as i32)
+        .map(|d| s.rmatch_indices(d).collect::<Vec<_>>().iter().next().unwrap_or(&(999 as usize,"")).0)
+        .map(|d| {if d == 999 {return -1;} else {return d as i32;}})
         .collect();
     let max : i32 = idx_vec    
         .iter()
