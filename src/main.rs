@@ -4,11 +4,12 @@ fn main() {
         .split("\n")
         .map(|l| l.to_string())
         .collect::<Vec<String>>();
-    let digits : Vec<i32> = include_str!("../input.txt")
+    let mut digits : Vec<i32> = include_str!("../input.txt")
         .split("\n")
         .map(|l| vec![find_left(l), find_right(l)].iter().collect::<String>())
         .map(|l| l.parse::<i32>().unwrap())
         .collect();
+    digits.pop();
 
     let sum : i32 = digits
         .iter()
